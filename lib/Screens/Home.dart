@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/Widgets/CategoryGenerator.dart';
+import 'package:news_app/Widgets/NewsTile.dart';
 import 'package:news_app/models/CategoryModel.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -28,28 +29,17 @@ class HomeScreen extends StatelessWidget {
             },
           ),
         ),
-        Column(
-          children: [
-            const SizedBox(
-              height: 10,
-            ),
-            ClipRRect(
-              borderRadius: const BorderRadius.all(Radius.circular(8)),
-              child: Image.asset('assets/business.avif'),
-            ),
-            const Text(
-              'dsfkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk',
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 24),
-            ),
-            const Text(
-              'dsfkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk',
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 12, color: Colors.grey),
-            )
-          ],
+        Expanded(
+          child: ListView.builder(
+            
+            itemCount: 10,
+            itemBuilder: (context, index) {
+              return const NewsTile(
+                  imageurl: 'assets/business.avif',
+                  title: ' title',
+                  description: 'description');
+            },
+          ),
         )
       ],
     );
