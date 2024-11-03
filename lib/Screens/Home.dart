@@ -1,5 +1,11 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:news_app/Screens/Business.dart';
+import 'package:news_app/Screens/Entertainment.dart';
+import 'package:news_app/Screens/GeneralScreen.dart';
+import 'package:news_app/Screens/HealthScreen.dart';
+import 'package:news_app/Screens/ScienceScreen.dart';
+import 'package:news_app/Screens/Sports.dart';
+import 'package:news_app/Screens/TechnologyScreen.dart';
 import 'package:news_app/Service/Service.dart';
 import 'package:news_app/Widgets/CategoryGenerator.dart';
 import 'package:news_app/Widgets/NewsTile.dart';
@@ -8,8 +14,10 @@ import 'package:news_app/models/Newstilemodel.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
-    Future<List<NewsTileModel>> newsTileModelList=Service().getHttp();
-    
+
+  final Future<List<NewsTileModel>> newsTileModelList =
+      Service().TopHeadLines();
+
   final List<CategoryModel> categoryModel = [
     CategoryModel(name: 'Business', imagetext: 'assets/business.avif'),
     CategoryModel(name: 'Entertainment', imagetext: 'assets/entertaiment.avif'),
@@ -36,7 +44,62 @@ class HomeScreen extends StatelessWidget {
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: CategoryGenerator(categoryModel: categoryModel[index]),
+                        child: GestureDetector(
+                          onTap: () {
+                            if (index == 0) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BusinessScreen(),
+                              ),
+                            );
+                          }else if (index == 1) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EntertainmentScreen(),
+                              ),
+                            );
+                          }else if (index == 2) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>GeneralScreen(),
+                              ),
+                            );
+                          }else if (index == 3) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>HealthScreen(),
+                              ),
+                            );
+                          }else if (index == 4) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>ScienceScreen(),
+                              ),
+                            );
+                          }else if (index == 5) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>SportsScreen(),
+                              ),
+                            );
+                          }else if (index == 6) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>TechnologyScreen(),
+                              ),
+                            );
+                          }
+                          },
+                          child: CategoryGenerator(
+                              categoryModel: categoryModel[index]),
+                        ),
                       );
                     },
                   ),
@@ -45,17 +108,39 @@ class HomeScreen extends StatelessWidget {
               childCount: 1, // We only need one item for the horizontal list
             ),
           ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return const NewsTile(
-                  imageurl: 'assets/business.avif',
-                  title: 'Title',
-                  description: 'Description',
+          FutureBuilder<List<NewsTileModel>>(
+            future: newsTileModelList,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const SliverToBoxAdapter(
+                  child: Center(child: CircularProgressIndicator()),
                 );
-              },
-              childCount: newsTileModelList.length,
-            ),
+              } else if (snapshot.hasError) {
+                return SliverToBoxAdapter(
+                  child: Center(child: Text('Error: ${snapshot.error}')),
+                );
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return const SliverToBoxAdapter(
+                  child: Center(child: Text('No news available')),
+                );
+              } else {
+                // Data is available; use its length as the childCount
+                return SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final newsTile = snapshot.data![index];
+                      return NewsTile(
+                        imageurl: newsTile.imageurl ??
+                            'https://img-cdn.pixlr.com/image-generator/history/65bb506dcb310754719cf81f/ede935de-1138-4f66-8ed7-44bd16efc709/medium.webp',
+                        title: newsTile.title,
+                        description: newsTile.description,
+                      );
+                    },
+                    childCount: snapshot.data!.length,
+                  ),
+                );
+              }
+            },
           ),
         ],
       ),

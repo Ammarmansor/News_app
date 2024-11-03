@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:news_app/models/CategoryModel.dart';
 
 class CategoryGenerator extends StatelessWidget {
-  const CategoryGenerator({super.key, required this.categoryModel});
+  const CategoryGenerator({super.key, required this.categoryModel, this.onTap});
   final CategoryModel categoryModel;
+  final void Function()? onTap;
   @override
   Widget build(BuildContext context) {
     return Container(
