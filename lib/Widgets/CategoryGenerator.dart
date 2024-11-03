@@ -7,7 +7,7 @@ class CategoryGenerator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(right: 10),
+      margin: const EdgeInsets.only(right: 10),
       alignment: Alignment.center,
       height: 100,
       width: 200,

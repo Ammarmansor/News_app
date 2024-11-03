@@ -1,10 +1,15 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:news_app/Service/Service.dart';
 import 'package:news_app/Widgets/CategoryGenerator.dart';
 import 'package:news_app/Widgets/NewsTile.dart';
 import 'package:news_app/models/CategoryModel.dart';
+import 'package:news_app/models/Newstilemodel.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
+    Future<List<NewsTileModel>> newsTileModelList=Service().getHttp();
+    
   final List<CategoryModel> categoryModel = [
     CategoryModel(name: 'Business', imagetext: 'assets/business.avif'),
     CategoryModel(name: 'Entertainment', imagetext: 'assets/entertaiment.avif'),
@@ -14,34 +19,46 @@ class HomeScreen extends StatelessWidget {
     CategoryModel(name: 'Sports', imagetext: 'assets/sports.avif'),
     CategoryModel(name: 'Technology', imagetext: 'assets/technology.jpeg'),
   ];
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        SizedBox(
-          height: 100,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: categoryModel.length,
-            itemBuilder: (context, index) {
-              return CategoryGenerator(categoryModel: categoryModel[index]);
-            },
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                return SizedBox(
+                  height: 100,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: categoryModel.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: CategoryGenerator(categoryModel: categoryModel[index]),
+                      );
+                    },
+                  ),
+                );
+              },
+              childCount: 1, // We only need one item for the horizontal list
+            ),
           ),
-        ),
-        Expanded(
-          child: ListView.builder(
-            
-            itemCount: 10,
-            itemBuilder: (context, index) {
-              return const NewsTile(
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                return const NewsTile(
                   imageurl: 'assets/business.avif',
-                  title: ' title',
-                  description: 'description');
-            },
+                  title: 'Title',
+                  description: 'Description',
+                );
+              },
+              childCount: newsTileModelList.length,
+            ),
           ),
-        )
-      ],
+        ],
+      ),
     );
   }
 }
